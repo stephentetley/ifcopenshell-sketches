@@ -26,7 +26,9 @@ model3d = ifcopenshell.api.context.add_context(file=ifcfile, context_type="Model
 
 # note - for subsequent uses of `geometry.edit_object_placement` we have to call 
 # with `is_si=False`
-length = ifcopenshell.api.unit.add_si_unit(file=ifcfile, unit_type="LENGTHUNIT", prefix="CENTI")
+length = ifcopenshell.api.unit.add_si_unit(file=ifcfile, 
+                                           unit_type="LENGTHUNIT", 
+                                           prefix="CENTI")
 ifcopenshell.api.unit.assign_unit(file=ifcfile, units=[length])
 
 
