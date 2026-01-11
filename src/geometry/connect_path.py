@@ -1,3 +1,4 @@
+import ifcopenshell.api.aggregate
 import ifcopenshell.api.context
 import ifcopenshell.api.project
 import ifcopenshell.api.unit
@@ -5,6 +6,7 @@ import ifcopenshell.api.geometry
 import ifcopenshell.api.root
 from ifcopenshell.util.shape_builder import V
 import ifcopenshell.util.shape_builder
+import ifcopenshell.api.spatial
 import numpy
 
 
@@ -30,7 +32,7 @@ model3d = ifcopenshell.api.context.add_context(file=ifcfile, context_type="Model
 
 # note - for subsequent uses of `geometry.edit_object_placement` we have to call 
 # with `is_si=False`
-length = ifcopenshell.api.unit.add_si_unit(file=ifcfile, unit_type="LENGTHUNIT", prefix="CENTI")
+length = ifcopenshell.api.unit.add_si_unit(file=ifcfile, unit_type="LENGTHUNIT", prefix="MILLI")
 ifcopenshell.api.unit.assign_unit(file=ifcfile, units=[length])
 
 
@@ -56,14 +58,14 @@ wall2 = ifcopenshell.api.root.create_entity(file=ifcfile,
 builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
 block1 = builder.block(position= V(0,0,0), 
-                       x_length= 100,
-                       y_length= 10,
-                       z_length= 10)
+                       x_length= 1000,
+                       y_length= 100,
+                       z_length= 100)
 
-block2 = builder.block(position= V(100,0,0), 
-                       x_length= 100,
-                       y_length= 10,
-                       z_length= 10)
+block2 = builder.block(position= V(1000,0,0), 
+                       x_length= 1000,
+                       y_length= 100,
+                       z_length= 100)
 
 rep1 = builder.get_representation(context=body, items=[block1])
 rep2 = builder.get_representation(context=body, items=[block2])
@@ -77,8 +79,6 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
                                                 product=wall2, 
                                                 representation=rep2)
 
-# placement values are centimetres
-placement1 = make_placement_matrix(0, 0, 0)
 
 path1 = ifcopenshell.api.geometry.connect_path(file=ifcfile, 
                                                relating_element=wall1,
@@ -86,14 +86,19 @@ path1 = ifcopenshell.api.geometry.connect_path(file=ifcfile,
                                                relating_connection="ATEND",
                                                related_connection="ATSTART")
 
+# We can assign the walls into a space which gets shown in the hierarchy view
+# In FreeCAD and Blender/Bonsai we can then toggle visibility of the space 
+# which toglles both walls - or toggle the individual walls separately.
+# What we can't do is edit_object_placement of the space
 
-# walls have been connected into a "path" so we can 
-# place the path rather than the individual walls
-# Use `is_si=False`...
-ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
-                                                product=path1, 
-                                                matrix=placement1, 
-                                                is_si=False)
+space1 = ifcopenshell.api.root.create_entity(file=ifcfile, 
+                                             ifc_class="IfcSpace", 
+                                             name="Space_1")
+ifcopenshell.api.aggregate.assign_object(file=ifcfile, products=[space1], relating_object=project)
+ifcopenshell.api.aggregate.assign_object(file=ifcfile, products=[wall1, wall2], relating_object=space1)
+ifcopenshell.api.spatial.assign_container(file=ifcfile, 
+                                                products=[wall1, wall2],
+                                                relating_structure=space1)
 
 
 # Write out to a file

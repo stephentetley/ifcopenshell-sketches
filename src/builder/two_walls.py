@@ -1,6 +1,10 @@
 import ifcopenshell.api.context
+import ifcopenshell.api.geometry
 import ifcopenshell.api.project
+import ifcopenshell.api.root
 import ifcopenshell.api.unit
+import ifcopenshell.util.placement
+import ifcopenshell.util.shape_builder 
 from ifcopenshell.util.shape_builder import V
 import numpy
 
@@ -96,5 +100,7 @@ ifcopenshell.api.geometry.edit_object_placement(file=ifcfile,
                                                 matrix=placement_wall2, 
                                                 is_si=False)
 
+
 # Write out to a file
 ifcfile.write("./output/builder_two_walls.ifc")
+
