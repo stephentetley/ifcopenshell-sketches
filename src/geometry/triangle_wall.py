@@ -57,7 +57,8 @@ wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,
 triangle_base = 0.5
 triangle_height = 0.30
 
-clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, 0.0), normal=(-triangle_height, 0.0, triangle_base))
+clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, 0.0), 
+                                        normal=(-triangle_height, 0.0, triangle_base))
 clipping_list = [clip1]
 
 # height here is arbitrary, must be >= triangle_height 

@@ -20,14 +20,12 @@ def make_placement_angle_matrix(deg, x, y, z):
     matrix[:,3][0:3] = (x, y, z)
     return matrix
 
-def d2r(deg: float) -> float:
-    return (deg * math.pi) / 180
 
 # Create a blank model
 ifcfile = ifcopenshell.api.project.create_file(version="IFC4X3")
 project = ifcopenshell.api.root.create_entity(file=ifcfile, 
                                               ifc_class="IfcProject", 
-                                              name="Clipped Wall Project")
+                                              name="Clipped Gable Wall Project")
 
 model3d = ifcopenshell.api.context.add_context(file=ifcfile, context_type="Model")
 
@@ -45,17 +43,23 @@ body = ifcopenshell.api.context.add_context(file=ifcfile,
 
 
 ## wall_1
+wall_length = 1.0
+side_height = 2.0
+gable_height = 2.25
 
 wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,  
                                             ifc_class='IfcWall', 
                                             name='Wall_1', 
                                             predefined_type='NOTDEFINED')
 
+
 # clip from 2 metres up the wall
-clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, 2.0), normal=(-1.0, 0.0, 1.0))
-clip2 = ifcopenshell.util.data.Clipping(location=(1.0, 0.0, 2.0), normal=(1.0, 0.0, 1.0))
-
-
+triangle_height = gable_height - side_height
+triangle_base = wall_length / 2.0
+clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, 2.0), 
+                                        normal=(-triangle_height, 0.0, triangle_base))
+clip2 = ifcopenshell.util.data.Clipping(location=(1.0, 0.0, 2.0), 
+                                        normal=(triangle_height, 0.0, triangle_base))
 clipping_list = [clip1, clip2]
 
 wrep = ifcopenshell.api.geometry.add_wall_representation(file=ifcfile,
@@ -86,5 +90,5 @@ ifcopenshell.api.geometry.edit_object_placement(file=ifcfile,
 
 
 # Write out to a file
-ifcfile.write("./output/geometry_clipped_wall1.ifc")
+ifcfile.write("./output/geometry_clipped_gable_wall1.ifc")
 
