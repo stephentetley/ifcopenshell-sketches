@@ -1,6 +1,9 @@
 import ifcopenshell.api.context
+import ifcopenshell.api.geometry
 import ifcopenshell.api.project
+import ifcopenshell.api.root
 import ifcopenshell.api.unit
+import ifcopenshell.util.placement
 import numpy
 
 
@@ -59,7 +62,7 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
                                                 representation=wrep1)
 
 # placement values are centimetres
-placement_wall1 = make_placement_angle_matrix(0, 500.0, 500.0, 0)
+placement_wall1 = make_placement_angle_matrix(0, 0, 0, 0)
 
 # need to use `is_si=False`
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
@@ -85,12 +88,26 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
                                                 representation=wrepr2)
 
 # placement in mm
-placement_wall2 = make_placement_angle_matrix(90.0, 500.0 + 2000.0, 500.0 + (wall_thickness_metres*1000.0), 0)
+placement_wall2 = make_placement_angle_matrix(90.0, 2000.0, (wall_thickness_metres*1000.0), 0)
 
 # need to use `is_si=False`
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
                                                 product=wall2, 
                                                 matrix=placement_wall2, 
+                                                is_si=False)
+
+
+composite1 = ifcopenshell.api.geometry.connect_path(file=ifcfile, 
+                                                    relating_element=wall1,
+                                                    related_element=wall2,
+                                                    relating_connection="ATEND",
+                                                    related_connection="ATSTART")
+
+# placement values are centimetres
+placement_composite = make_placement_angle_matrix(0, 500.0, 500.0, 0)
+ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
+                                                product=composite1, 
+                                                matrix=placement_composite, 
                                                 is_si=False)
 
 # Write out to a file
