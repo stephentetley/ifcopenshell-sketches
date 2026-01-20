@@ -30,7 +30,7 @@ def make_placement_angle_matrix_x(deg, x, y, z):
 ifcfile = ifcopenshell.api.project.create_file(version="IFC4X3")
 project = ifcopenshell.api.root.create_entity(file=ifcfile, 
                                               ifc_class="IfcProject", 
-                                              name="Wall With Opening Project")
+                                              name="Wall With Opening Project-1")
 
 model3d = ifcopenshell.api.context.add_context(file=ifcfile, context_type="Model")
 
