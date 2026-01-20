@@ -1,7 +1,12 @@
 import ifcopenshell.api.context
-import ifcopenshell.api.project
+import ifcopenshell.api.feature
 import ifcopenshell.api.geometry
+import ifcopenshell.api.project
+import ifcopenshell.api.root
+import ifcopenshell.api.unit
+import ifcopenshell.util.shape_builder
 from ifcopenshell.util.shape_builder import V
+import ifcopenshell.util.placement
 import numpy
 
 
@@ -90,10 +95,8 @@ ifcopenshell.api.geometry.edit_object_placement(file=ifcfile,
 opening = ifcopenshell.api.root.create_entity(file=ifcfile, 
                                               ifc_class="IfcOpeningElement")
 
-builder2 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
-
-cirle1 = builder2.circle(center=V(0.0, 0.0),
+cirle1 = builder.circle(center=V(0.0, 0.0),
                          radius = 320.0)  
 
 
@@ -114,7 +117,7 @@ ifcopenshell.api.geometry.edit_object_placement(file=ifcfile,
                                                 matrix=tank_opening_placement_matrix, 
                                                 is_si=False)
 
-# The opening will now void the wall.
+# The opening will now void the extent.
 ifcopenshell.api.feature.add_feature(file=ifcfile, feature=opening, element=site_extent)
 
 # Write out to a file
