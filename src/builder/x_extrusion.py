@@ -3,19 +3,21 @@ import ifcopenshell.api.project
 import ifcopenshell.api.unit
 import ifcopenshell.api.geometry
 import ifcopenshell.api.root
-from ifcopenshell.util.shape_builder import V
 import ifcopenshell.util.shape_builder
+from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
+from typing import Literal
 
-# Use rotations to build in the yz plane and extrude on the x axis
-
-
-def make_placement_flip_xz_matrix(x, y, z): 
+def make_placement_matrix(position: VectorType = (0.0, 0.0, 0.0),
+                          *,
+                          rotations: list[tuple[float, Literal['X', 'Y', 'Z']]] = []) -> numpy.ndarray: 
     matrix = numpy.eye(4)
-    matrix = ifcopenshell.util.placement.rotation(90, "X") @ matrix
+    for (deg, rot) in rotations:
+        matrix = ifcopenshell.util.placement.rotation(deg, rot) @ matrix
+    (x, y, z) = position
     matrix[:,3][0:3] = (x, y, z)
-    matrix = ifcopenshell.util.placement.rotation(90, "Z") @ matrix    
     return matrix
+
 
 
 # Create a blank model
@@ -75,7 +77,9 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
 
 
 # placement values are centimetres
-placement1 = make_placement_flip_xz_matrix(0, 0, 0)
+# Use rotations to build in the yz plane and extrude on the x axis
+placement1 = make_placement_matrix(position=V(0, 0, 0), 
+                                   rotations=[(90, 'X'), (90, 'Z')])
 
 # need to use `is_si=False`
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 

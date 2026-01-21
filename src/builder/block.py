@@ -1,19 +1,23 @@
 import ifcopenshell.api.context
 import ifcopenshell.api.project
-from ifcopenshell.util.shape_builder import V
+import ifcopenshell.api.root
+import ifcopenshell.api.unit
+import ifcopenshell.util.shape_builder
+from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
+from typing import Literal
 
-
-def make_placement_matrix(x, y, z): 
+def make_placement_matrix(position: VectorType = (0.0, 0.0, 0.0),
+                          *,
+                          rotations: list[tuple[float, Literal['X', 'Y', 'Z']]] = []) -> numpy.ndarray: 
     matrix = numpy.eye(4)
+    for (deg, rot) in rotations:
+        matrix = ifcopenshell.util.placement.rotation(deg, rot) @ matrix
+    (x, y, z) = position
     matrix[:,3][0:3] = (x, y, z)
     return matrix
 
-def make_placement_angle_matrix(deg, x, y, z): 
-    matrix = numpy.eye(4)
-    matrix = ifcopenshell.util.placement.rotation(deg, "Z") @ matrix
-    matrix[:,3][0:3] = (x, y, z)
-    return matrix
+
 
 
 # Create a blank model
@@ -51,7 +55,8 @@ representation = builder.get_representation(context=body, items=[block1])
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, product=element, representation=representation)
 
-block1_placement_matrix = make_placement_angle_matrix(45, .1, 0, 0)
+block1_placement_matrix = make_placement_matrix(position=V(0.1, 0.0, 0.0),
+                                                rotations=[(45, 'Z')])
 
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
                                                 product=element,

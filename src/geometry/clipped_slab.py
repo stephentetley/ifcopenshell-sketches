@@ -3,22 +3,23 @@ import ifcopenshell.api.project
 import ifcopenshell.api.unit
 import ifcopenshell.api.geometry
 import ifcopenshell.api.root
-from ifcopenshell.util.shape_builder import V
 import ifcopenshell.util.data
+from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
+from typing import Literal
 import math
 
-
-def make_placement_matrix(x, y, z): 
+def make_placement_matrix(position: VectorType = (0.0, 0.0, 0.0),
+                          *,
+                          rotations: list[tuple[float, Literal['X', 'Y', 'Z']]] = []) -> numpy.ndarray: 
     matrix = numpy.eye(4)
+    for (deg, rot) in rotations:
+        matrix = ifcopenshell.util.placement.rotation(deg, rot) @ matrix
+    (x, y, z) = position
     matrix[:,3][0:3] = (x, y, z)
     return matrix
 
-def make_placement_angle_matrix(deg, x, y, z): 
-    matrix = numpy.eye(4)
-    matrix = ifcopenshell.util.placement.rotation(deg, "Z") @ matrix
-    matrix[:,3][0:3] = (x, y, z)
-    return matrix
+
 
 def d2r(deg: float) -> float:
     return (deg * math.pi) / 180
@@ -72,7 +73,7 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
 
 
 # placement values are centimetres
-placement1 = make_placement_matrix(0, 0, 0)
+placement1 = make_placement_matrix(V(0, 0, 0))
 
 
 
