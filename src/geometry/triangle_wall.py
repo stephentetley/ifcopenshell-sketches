@@ -4,6 +4,7 @@ import ifcopenshell.api.unit
 import ifcopenshell.api.geometry
 import ifcopenshell.api.root
 import ifcopenshell.util.data
+import ifcopenshell.util.placement
 from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
 from typing import Literal

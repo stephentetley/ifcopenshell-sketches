@@ -3,6 +3,7 @@ import ifcopenshell.api.geometry
 import ifcopenshell.api.project
 import ifcopenshell.api.unit
 import ifcopenshell.api.root
+import ifcopenshell.util.placement
 import ifcopenshell.util.shape_builder
 import ifcopenshell.util.shape
 import ifcopenshell.geom
@@ -52,13 +53,13 @@ sphere_entity = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    name='Sphere_1', 
                                                    predefined_type='NOTDEFINED')
 
-builder1 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
+builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
-bsphere1 = builder1.sphere(radius=50.0, center=V(0, 0, 0))
+bsphere1 = builder.sphere(radius=50.0, center=V(0, 0, 0))
 
 
 
-repr = builder1.get_representation(context=body, 
+repr = builder.get_representation(context=body, 
                                    items=[bsphere1], 
                                    representation_type=None)
 

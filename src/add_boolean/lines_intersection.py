@@ -1,7 +1,10 @@
 import ifcopenshell.api.context
 import ifcopenshell.api.geometry
 import ifcopenshell.api.project
+import ifcopenshell.api.root
 import ifcopenshell.api.unit
+import ifcopenshell.util.placement
+import ifcopenshell.util.shape_builder
 from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
 from typing import Literal
@@ -46,19 +49,19 @@ proxy1 = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    name='Proxy_1', 
                                                    predefined_type='NOTDEFINED')
 
-builder1 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
+builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
-line1 = builder1.rectangle(size=V(100, 5), position=V(0, 0))
-extruded1 = builder1.extrude(profile_or_curve=line1, 
+line1 = builder.rectangle(size=V(100, 5), position=V(0, 0))
+extruded1 = builder.extrude(profile_or_curve=line1, 
                             magnitude= 50.0, 
                             position = V(0, 0, 0)) 
 
-line2 = builder1.rectangle(size=V(50, 5), position=V(90, 0))
-extruded2 = builder1.extrude(profile_or_curve=line2, 
+line2 = builder.rectangle(size=V(50, 5), position=V(90, 0))
+extruded2 = builder.extrude(profile_or_curve=line2, 
                             magnitude= 60.0, 
                             position = V(0, 0, 0)) 
 
-repr = builder1.get_representation(context=body, items=[extruded1, extruded2], representation_type=None)
+repr = builder.get_representation(context=body, items=[extruded1, extruded2], representation_type=None)
 booleans = ifcopenshell.api.geometry.add_boolean(file=ifcfile,
                                       first_item=extruded1,
                                       second_items=[extruded2],

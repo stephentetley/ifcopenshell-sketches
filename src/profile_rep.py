@@ -56,14 +56,14 @@ tube_entity = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    predefined_type='NOTDEFINED')
 
 
-builder1 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
+builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
 
-extruded1 = builder1.extrude(profile_or_curve=tube_profile, 
+extruded1 = builder.extrude(profile_or_curve=tube_profile, 
                              magnitude= 60.0, 
                              position = V(0, 0, 0)) 
 
-repr = builder1.get_representation(context=body, 
+repr = builder.get_representation(context=body, 
                                    items=[extruded1], 
                                    representation_type=None)
 

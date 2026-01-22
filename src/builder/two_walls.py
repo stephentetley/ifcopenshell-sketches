@@ -52,12 +52,12 @@ entity_wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    name='Wall_1', 
                                                    predefined_type='NOTDEFINED')
 
-builder1 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
-block1 = builder1.block(position=V(0.0, 0.0, 0.0),
+builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
+block1 = builder.block(position=V(0.0, 0.0, 0.0),
                           x_length = 200.0,
                           y_length = wall_thickness,
                           z_length = 140.0)
-block_representation1 = builder1.get_representation(context=body, items=[block1])
+block_representation1 = builder.get_representation(context=body, items=[block1])
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
                                                 product=entity_wall1, 
@@ -79,12 +79,11 @@ entity_wall2 = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    name='Wall_2', 
                                                    predefined_type='NOTDEFINED')
 
-builder2 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
-block2 = builder1.block(position=V(0.0, 0.0, 0.0),
+block2 = builder.block(position=V(0.0, 0.0, 0.0),
                           x_length = 60.0 - wall_thickness,
                           y_length = wall_thickness,
                           z_length = 140.0)
-block_representation2 = builder2.get_representation(context=body, items=[block2])
+block_representation2 = builder.get_representation(context=body, items=[block2])
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
                                                 product=entity_wall2, 

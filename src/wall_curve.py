@@ -1,6 +1,10 @@
 import ifcopenshell.api.context
+import ifcopenshell.api.geometry
 import ifcopenshell.api.project
+import ifcopenshell.api.root
 import ifcopenshell.api.unit
+import ifcopenshell.util.placement
+import ifcopenshell.util.shape_builder
 from ifcopenshell.util.shape_builder import V, VectorType
 import numpy
 from typing import Literal
@@ -44,19 +48,22 @@ entity_wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                    name='Wall_1', 
                                                    predefined_type='NOTDEFINED')
 
-builder1 = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
+builder = ifcopenshell.util.shape_builder.ShapeBuilder(ifc_file=ifcfile)
 
-points = [V(100, 0), V(70.7, 70.7), V(0, 100), V(0, 98), V(69.296, 69.296), V(98, 0)]
-arc_points = [1, 4] # point with index 1 is the middle of the outer arc, 4 is the middle of inner arc
+pts = [V(100, 0), V(70.7, 70.7), V(0, 100), V(0, 98), V(69.296, 69.296), V(98, 0)]
+arc_pts = [1, 4] # point with index 1 is the middle of the outer arc, 4 is the middle of inner arc
 position = V(0,0)
-curved_polyline = builder1.polyline(points, closed=True, position_offset=position, arc_points=arc_points)
+curved_polyline = builder.polyline(points=pts, 
+                                   closed=True, 
+                                   position_offset=position, 
+                                   arc_points=arc_pts)
 
 
-extruded = builder1.extrude(profile_or_curve=curved_polyline, 
+extruded = builder.extrude(profile_or_curve=curved_polyline, 
                             magnitude= 140.0, 
                             position = V(0, 0, 0)) 
 
-repr_3d_1 = builder1.get_representation(context=body, items=[extruded])
+repr_3d_1 = builder.get_representation(context=body, items=[extruded])
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
                                                 product=entity_wall1, 
