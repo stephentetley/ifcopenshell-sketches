@@ -71,6 +71,9 @@ ifcopenshell.api.geometry.edit_object_placement(file=ifcfile,
                                                 matrix=placement_wall1, 
                                                 is_si=False)
 
+
+# Opening
+
 door_opening = ifcopenshell.api.root.create_entity(file=ifcfile, 
                                                    ifc_class="IfcOpeningElement")
 
