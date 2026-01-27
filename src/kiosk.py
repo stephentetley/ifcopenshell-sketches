@@ -43,7 +43,7 @@ body = ifcopenshell.api.context.add_context(file=ifcfile,
 
 kiosk_width_metres = 1.8
 kiosk_side_height_metres = 1.6
-kiosk_gable_height = 1.85
+kiosk_gable_height_metres = 1.85
 kiosk_depth_metres = 0.8
 wall_thickness_metres = 0.01
 
@@ -113,12 +113,24 @@ right_side_wall = ifcopenshell.api.root.create_entity(file=ifcfile,
                                                     name='Right_Side_Wall', 
                                                     predefined_type='NOTDEFINED')
 
-side_length = kiosk_depth_metres - (2.0 * wall_thickness_metres)
+side_length_metres = kiosk_depth_metres - (2.0 * wall_thickness_metres)
+
+
+# clip from 2 metres up the wall (side_hight_m)
+triangle_height_m = kiosk_gable_height_metres - kiosk_side_height_metres
+triangle_base_m = kiosk_depth_metres / 2.0
+clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, kiosk_side_height_metres), 
+                                        normal=(-triangle_height_m, 0.0, triangle_base_m))
+clip2 = ifcopenshell.util.data.Clipping(location=(side_length_metres, 0.0, kiosk_side_height_metres), 
+                                        normal=(triangle_height_m, 0.0, triangle_base_m))
+clipping_list = [clip1, clip2]
+
 rsw_rep = ifcopenshell.api.geometry.add_wall_representation(file=ifcfile,
                                                           context=body, 
-                                                          length=side_length, 
-                                                          height=kiosk_side_height_metres, 
-                                                          thickness=wall_thickness_metres)
+                                                          length=side_length_metres, 
+                                                          height=kiosk_gable_height_metres, 
+                                                          thickness=wall_thickness_metres,
+                                                          clippings=clipping_list)
 
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
@@ -146,9 +158,10 @@ left_side_wall = ifcopenshell.api.root.create_entity(file=ifcfile,
 
 lsw_rep = ifcopenshell.api.geometry.add_wall_representation(file=ifcfile,
                                                           context=body, 
-                                                          length=side_length, 
-                                                          height=kiosk_side_height_metres, 
-                                                          thickness=wall_thickness_metres)
+                                                          length=side_length_metres, 
+                                                          height=kiosk_gable_height_metres, 
+                                                          thickness=wall_thickness_metres,
+                                                          clippings=clipping_list)
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
                                                 product=left_side_wall, 
@@ -189,8 +202,8 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
                                                 product=door_opening, 
                                                 representation=opening_repr)
 
-
-opening_placement = make_placement_matrix(V(150.0, 0.0, 0.0))
+x_displacement_mm = (kiosk_width_metres - door_width_metres) / 2.0 * 1000.0
+opening_placement = make_placement_matrix(V(x_displacement_mm, 0.0, 0.0))
 
 # need to use `is_si=False`
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 

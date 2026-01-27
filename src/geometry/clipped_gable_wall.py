@@ -41,9 +41,9 @@ body = ifcopenshell.api.context.add_context(file=ifcfile,
 
 
 ## wall_1
-wall_length = 1.0
-side_height = 2.0
-gable_height = 2.25
+wall_length_m = 1.0
+side_height_m = 2.0
+gable_height_m = 2.25
 
 wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,  
                                             ifc_class='IfcWall', 
@@ -51,19 +51,19 @@ wall1 = ifcopenshell.api.root.create_entity(file=ifcfile,
                                             predefined_type='NOTDEFINED')
 
 
-# clip from 2 metres up the wall
-triangle_height = gable_height - side_height
-triangle_base = wall_length / 2.0
-clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, 2.0), 
-                                        normal=(-triangle_height, 0.0, triangle_base))
-clip2 = ifcopenshell.util.data.Clipping(location=(1.0, 0.0, 2.0), 
-                                        normal=(triangle_height, 0.0, triangle_base))
+# clip from 2 metres up the wall (side_hight_m)
+triangle_height_m = gable_height_m - side_height_m
+triangle_base_m = wall_length_m / 2.0
+clip1 = ifcopenshell.util.data.Clipping(location=(0.0, 0.0, side_height_m), 
+                                        normal=(-triangle_height_m, 0.0, triangle_base_m))
+clip2 = ifcopenshell.util.data.Clipping(location=(wall_length_m, 0.0, side_height_m), 
+                                        normal=(triangle_height_m, 0.0, triangle_base_m))
 clipping_list = [clip1, clip2]
 
 wrep = ifcopenshell.api.geometry.add_wall_representation(file=ifcfile,
                                                          context=body,
-                                                         length=1.0,
-                                                         height=2.5,
+                                                         length=wall_length_m,
+                                                         height=gable_height_m,
                                                          thickness=0.1,
                                                          clippings=clipping_list
                                                          )
