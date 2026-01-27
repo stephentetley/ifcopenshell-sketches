@@ -236,21 +236,24 @@ theta = math.atan(triangle_height_m / half_depth_m)
 theta_deg = math.degrees(theta)
 slab_ylen_m = math.sqrt((half_depth_m * half_depth_m) + (triangle_height_m * triangle_height_m))
 
+print(f"slab_ylen_m={slab_ylen_m}")
+
 slab_points1 = [(0.0, 0.0), (kiosk_width_m, 0), (kiosk_width_m, slab_ylen_m), (0.0, slab_ylen_m)]
 frslab_rep = ifcopenshell.api.geometry.add_slab_representation(file=ifcfile,
                                                           context=body, 
                                                           depth=wall_thickness_m,
                                                           direction_sense='POSITIVE',
                                                           polyline=slab_points1,
-                                                          x_angle = theta # math.radians(30)
+                                                          x_angle = 0 
                                                           )
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
                                                 product=front_roof_slab, 
                                                 representation=frslab_rep)
 
+wall_thickness_mm = wall_thickness_m * 1000.0
 z_displacement_mm = kiosk_side_height_m * 1000.0
-frslab_placement = make_placement_matrix(V(0.0, 0.0, z_displacement_mm), rotations=[(theta_deg, 'X')])
+frslab_placement = make_placement_matrix(V(0.0, wall_thickness_mm, z_displacement_mm), rotations=[(theta_deg, 'X')])
 
 
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
@@ -263,7 +266,7 @@ brslab_rep = ifcopenshell.api.geometry.add_slab_representation(file=ifcfile,
                                                           depth=wall_thickness_m,
                                                           direction_sense='POSITIVE',
                                                           polyline=slab_points1,
-                                                          x_angle = -theta
+                                                          x_angle = 0
                                                           )
 
 ifcopenshell.api.geometry.assign_representation(file=ifcfile, 
@@ -273,7 +276,7 @@ ifcopenshell.api.geometry.assign_representation(file=ifcfile,
 triangle_height_mm = 1000.0 * triangle_height_m 
 half_depth_mm = 1000.0 * half_depth_m 
 
-brslab_placement = make_placement_matrix(position=V(0.0, half_depth_mm, z_displacement_mm + triangle_height_mm),
+brslab_placement = make_placement_matrix(position=V(0.0, half_depth_mm - wall_thickness_mm, z_displacement_mm + triangle_height_mm),
                                           rotations=[(-theta_deg, 'X')]) 
 
 ifcopenshell.api.geometry.edit_object_placement(file=ifcfile, 
